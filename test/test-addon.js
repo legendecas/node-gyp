@@ -16,6 +16,7 @@ const execFileSync = (...args) => cp.execFileSync(...args).toString().trim()
 
 const execFile = async (cmd) => {
   const [err,, stderr] = await util.execFile(process.execPath, cmd, {
+    maxBuffer: 100_000_000,
     env: { ...process.env, NODE_GYP_NULL_LOGGER: undefined },
     encoding: 'utf-8'
   })
@@ -124,6 +125,7 @@ describe('addon', function () {
     const cmd = [nodeGyp, 'rebuild', '-C', addonPath, '--loglevel=verbose']
     const [err, logLines] = await execFile(cmd)
     const lastLine = logLines[logLines.length - 1]
+    console.log(err)
     assert.strictEqual(err, null)
     assert.strictEqual(lastLine, 'gyp info ok', 'should end in ok')
     assert.strictEqual(runHello(notNodePath), 'world')
